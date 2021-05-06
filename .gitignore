@@ -7,6 +7,8 @@
 
 # dependencies
 /node_modules
+/apps/proxy/node_modules
+/apps/proxy/.serverless
 
 # IDEs and editors
 /.idea

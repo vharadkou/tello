@@ -4,9 +4,31 @@ import { AppService } from './app.service';
 
 import sdk from '@0x77/tellots';
 
+import WebSocket from 'ws';
+
 @Controller('commands')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  private ws = new WebSocket(
+    'wss://c8efbuti88.execute-api.eu-west-1.amazonaws.com/dev',
+    {
+      perMessageDeflate: false,
+    }
+  );
+
+  constructor(private readonly appService: AppService) {
+    this.ws.on('open', () => {
+      this.ws.send(
+        JSON.stringify({
+          action: 'sendMessage',
+          data: 'Connection Opened',
+        })
+      );
+    });
+
+    this.ws.on('message', (data) => {
+      console.log('DATA: ', data);
+    });
+  }
 
   @Get()
   getData() {
@@ -51,8 +73,17 @@ export class AppController {
 
   @Get('battery')
   async battery() {
-    const battery = await sdk.read.battery();
+    this.ws.send(
+      JSON.stringify({
+        action: 'sendMessage',
+        data: 'Battery',
+      })
+    );
 
-    return battery;
+    try {
+      // return await sdk.read.battery();
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

@@ -1,15 +1,9 @@
 import styles from './app.module.css';
-
-import { ReactComponent as Logo } from './logo.svg';
-import star from './star.svg';
-
 import Sockette from 'sockette';
 import { useEffect, useState } from 'react';
-//Init WebSockets with Cognito Access Token
 
 export function App() {
   const [ws, setWs] = useState<Sockette>();
-  const [data, setData] = useState<string>();
 
   useEffect(() => {
     const wss = new Sockette(
@@ -17,14 +11,8 @@ export function App() {
       {
         timeout: 5e3,
         maxAttempts: 1,
-        onopen: (e) => {
-          console.log('Connected:', e);
-          setData('Connected');
-        },
-        onmessage: (e) => {
-          console.log('Message Received:', e);
-          setData(JSON.stringify(e.data));
-        },
+        onopen: (e) => console.log('Connected:', e),
+        onmessage: (e) => console.log('Message Received:', e),
         onreconnect: (e) => console.log('Reconnecting...', e),
         onmaximum: (e) => console.log('Stop Attempting!', e),
         onclose: (e) => console.log('Closed!', e),
@@ -38,47 +26,56 @@ export function App() {
   const testMessage = () => {
     ws.json({
       action: 'sendMessage',
-      data: 'FRONT: testMessage',
+      data: {
+        action: 'FRONT COMMAND: testMessage',
+        payload: 'FRONT COMMAND: testMessage',
+      },
     });
   };
 
   const connectToDrone = () => {
     ws.json({
       action: 'sendMessage',
-      data: 'FRONT: connectToDrone',
+      data: {
+        action: 'FRONT COMMAND: connectToDrone',
+      },
     });
   };
 
   const takeOff = () => {
     ws.json({
       action: 'sendMessage',
-      data: 'FRONT: takeOff',
+      data: {
+        action: 'FRONT COMMAND: takeOff',
+      },
     });
   };
 
   const land = () => {
     ws.json({
       action: 'sendMessage',
-      data: 'FRONT: land',
+      data: {
+        action: 'FRONT COMMAND: land',
+      },
     });
   };
 
   const droneInfo = () => {
     ws.json({
       action: 'sendMessage',
-      data: 'FRONT: droneInfo',
+      data: {
+        action: 'FRONT COMMAND: droneInfo',
+      },
     });
   };
-  console.log(data);
+
   return (
     <div className={styles.app}>
       <button onClick={testMessage}>Test Message</button>
-      <button onClick={connectToDrone}>Connect to Drone</button>
+      <button onClick={connectToDrone}>Connect To Drone</button>
       <button onClick={takeOff}>Take Off</button>
       <button onClick={land}>Land</button>
       <button onClick={droneInfo}>Drone Info</button>
-
-      <pre>{data}</pre>
     </div>
   );
 }

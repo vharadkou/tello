@@ -20,13 +20,75 @@ export class AppController {
       this.ws.send(
         JSON.stringify({
           action: 'sendMessage',
-          data: 'Connection Opened',
+          data: {
+            action: 'DRONE SERVER POST: Connection created',
+          },
         })
       );
     });
 
-    this.ws.on('message', (data) => {
-      console.log('DATA: ', data);
+    this.ws.on('message', async (data: any) => {
+      console.log('DRONE SERVER RECEIVED: ', data);
+      const parsedData = JSON.parse(data);
+
+      if (parsedData.action === 'FRONT COMMAND: droneInfo') {
+        this.ws.send(
+          JSON.stringify({
+            action: 'sendMessage',
+            data: {
+              action: 'DRONE SERVER: droneInfo',
+              payload: await this.droneInfo(),
+            },
+          })
+        );
+      }
+
+      if (parsedData.action === 'FRONT COMMAND: connectToDrone') {
+        this.ws.send(
+          JSON.stringify({
+            action: 'sendMessage',
+            data: {
+              action: 'DRONE SERVER: connectToDrone',
+              payload: await this.connect(),
+            },
+          })
+        );
+      }
+
+      if (parsedData.action === 'FRONT COMMAND: takeOff') {
+        this.ws.send(
+          JSON.stringify({
+            action: 'sendMessage',
+            data: {
+              action: 'DRONE SERVER: takeOff',
+              payload: await this.takeOff(),
+            },
+          })
+        );
+      }
+
+      if (parsedData.action === 'FRONT COMMAND: land') {
+        this.ws.send(
+          JSON.stringify({
+            action: 'sendMessage',
+            data: {
+              action: 'DRONE SERVER: land',
+              payload: await this.land(),
+            },
+          })
+        );
+      }
+
+      if (parsedData.action === 'FRONT COMMAND: testMessage') {
+        this.ws.send(
+          JSON.stringify({
+            action: 'sendMessage',
+            data: {
+              action: 'DRONE SERVER: testMessage',
+            },
+          })
+        );
+      }
     });
   }
 
@@ -41,7 +103,10 @@ export class AppController {
       await sdk.control.connect();
     } catch (e) {
       console.log(e);
+      return 'ERROR';
     }
+
+    return 'CONNECTED';
   }
 
   @Post('takeoff')
@@ -50,7 +115,10 @@ export class AppController {
       await sdk.control.takeOff();
     } catch (e) {
       console.log(e);
+      return 'ERROR';
     }
+
+    return 'TAKED OFF';
   }
 
   @Post('land')
@@ -59,7 +127,10 @@ export class AppController {
       await sdk.control.land();
     } catch (e) {
       console.log(e);
+      return 'ERROR';
     }
+
+    return 'LANDED';
   }
 
   @Post('flip')
@@ -68,22 +139,19 @@ export class AppController {
       await sdk.control.flip.front();
     } catch (e) {
       console.log(e);
+      return 'ERROR';
     }
+
+    return 'FLIPPED';
   }
 
-  @Get('battery')
-  async battery() {
-    this.ws.send(
-      JSON.stringify({
-        action: 'sendMessage',
-        data: 'Battery',
-      })
-    );
-
+  @Get('droneInfo')
+  async droneInfo() {
     try {
-      // return await sdk.read.battery();
+      return await sdk.read.battery();
     } catch (e) {
       console.log(e);
+      return 'ERROR';
     }
   }
 }

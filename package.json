@@ -25,10 +25,22 @@
     "update": "nx migrate latest",
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "client:deploy": "sls client deploy --no-config-change --no-policy-change --no-cors-change",
+    "client:deploy:nc": "npm run client:deploy -- --no-confirm",
+    "client:build:deploy": "npm run build && npm run client:deploy",
+    "client:build:deploy:nc": "npm run build && npm run client:deploy:nc",
+    "cloudfront:setup": "sls deploy",
+    "cloudfront:domainInfo": "sls domainInfo",
+    "cloudfront:invalidateCache": "sls invalidateCloudFrontCache",
+    "cloudfront:build:deploy": "npm run client:build:deploy && npm run cloudfront:invalidateCache",
+    "cloudfront:build:deploy:nc": "npm run client:build:deploy:nc && npm run cloudfront:invalidateCache",
+    "cloudfront:update:build:deploy": "npm run cloudfront:setup && npm run cloudfront:build:deploy",
+    "cloudfront:update:build:deploy:nc": "npm run cloudfront:setup && npm run cloudfront:build:deploy:nc"
   },
   "private": true,
   "dependencies": {
+    "@0x77/tellots": "^0.2.2",
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
@@ -39,6 +51,7 @@
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "0.13.7",
     "rxjs": "~6.6.3",
+    "tellojs": "^0.1.113",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
@@ -78,6 +91,9 @@
     "eslint-plugin-react-hooks": "4.2.0",
     "jest": "26.2.2",
     "prettier": "2.2.1",
+    "serverless": "^2.40.0",
+    "serverless-finch": "^2.6.0",
+    "serverless-single-page-app-plugin": "file:./serverless-single-page-app-plugin",
     "ts-jest": "26.4.0",
     "ts-node": "~9.1.1",
     "typescript": "~4.1.4"

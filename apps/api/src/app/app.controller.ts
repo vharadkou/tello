@@ -89,6 +89,18 @@ export class AppController {
           })
         );
       }
+
+      if (parsedData.action === 'FRONT COMMAND: flip') {
+        this.ws.send(
+          JSON.stringify({
+            action: 'sendMessage',
+            data: {
+              action: 'DRONE SERVER: flip',
+              payload: await this.flip(),
+            },
+          })
+        );
+      }
     });
   }
 
@@ -137,6 +149,10 @@ export class AppController {
   async flip() {
     try {
       await sdk.control.flip.front();
+      // await sdk.control.flip.front();
+      // await sdk.control.flip.left();
+      // await sdk.control.flip.right();
+      // await sdk.control.flip.back();
     } catch (e) {
       console.log(e);
       return 'ERROR';

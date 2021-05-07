@@ -60,6 +60,15 @@ export function App() {
     });
   };
 
+  const flip = () => {
+    ws.json({
+      action: 'sendMessage',
+      data: {
+        action: 'FRONT COMMAND: flip',
+      },
+    });
+  };
+
   const droneInfo = () => {
     ws.json({
       action: 'sendMessage',
@@ -75,6 +84,7 @@ export function App() {
       <button onClick={connectToDrone}>Connect To Drone</button>
       <button onClick={takeOff}>Take Off</button>
       <button onClick={land}>Land</button>
+      <button onClick={flip}>Flip</button>
       <button onClick={droneInfo}>Drone Info</button>
     </div>
   );
